@@ -2,6 +2,29 @@ let handlefail = function(err){
     console.log(err)
 }
 
+let appId = "b938a651ce0e4ce2b06231da64d17150";
+let globalStream;
+let isAudioMuted= false;
+let isVidioMuted= false;
+
+let client = AgoraRTC.createClient({
+    mode: "live",
+    codec: "h264"
+})
+
+client.init(appId,() => console.log("AgoraRTC Client Connected"),handlefail
+)
+
+function removeMyVideoStream(){
+    globalStream.stop();
+}
+
+function removeVideoStream(evt){
+    let stream = evt.stream;
+    stream.stop();
+    let remDiv = document.getElementById(stream.getId())
+    remDiv.parentNode.removeChild(remDiv);
+}
 
 function addVideoStream(streamId){
     console.log()
@@ -9,22 +32,20 @@ function addVideoStream(streamId){
     let streamDiv = document.createElement("div");
     streamDiv.id = streamId;
     // streamDiv.style.transform = "rotateY(180deg)";
-    streamDiv.style.height = "250px"
+    streamDiv.style.height = "350px"
     remoteContainer.appendChild(streamDiv)
-} 
+}
+
+document.getElementById("leave").onclick = function () {
+    client.leave(function() {
+        console.log("Left!")
+    },handlefail)
+    removeMyVideoStream();
+}
 
 document.getElementById("join").onclick = function () {
     let channelName = document.getElementById("channelName").value;
     let Username = document.getElementById("username").value;
-    let appId = "71da0dca906e4ec0aa279d0f2a5b436e";
-
-    let client = AgoraRTC.createClient({
-        mode: "live",
-        codec: "h264"
-    })
-
-    client.init(appId,() => console.log("AgoraRTC Client Connected"),handlefail
-    )
 
     client.join(
         null,
@@ -41,6 +62,8 @@ document.getElementById("join").onclick = function () {
                 console.log(`App id: ${appId}\nChannel id: ${channelName}`)
                 client.publish(localStream)
             })
+
+            globalStream = localStream
         }
     )
 
@@ -56,4 +79,29 @@ document.getElementById("join").onclick = function () {
         stream.play(stream.getId());
     })
 
+
+    client.on("peer-leave", function (evt) {
+        console.log("Peer has left")
+        removeVideoStream(evt)}
+        )
+}
+
+document.getElementById("video-mute").onclick = function(){
+    if(!isVidioMuted){
+        globalStream.muteVideo();
+        isVidioMuted = true;
+    }else{
+        globalStream.unmuteVideo();
+        isVidioMuted = false;
+    }
+}
+
+document.getElementById("audio-mute").onclick = function(){
+    if(!isAudioMuted){
+        globalStream.muteAudio();
+        isAudioMuted = true;
+    }else{
+        globalStream.unmuteAudio();
+        isAudioMuted = false;
+    }
 }

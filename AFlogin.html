@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>Agora Final Project</title>
+        <title>Login</title>
         <link rel="stylesheet" href="styles.css"/>
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
@@ -12,9 +12,13 @@
                 <a href="http://www.matriculate.org/"><img src="assets/matLogo.png" id="logo"/></a>
             </div>
             <div class="login">
-                <span id="main-text">Welcome to <span id="highlighted">Matriculate Video Chat!</span> Choose your sign-in:</span>
-                <a href="HSFlogin.html"><button class="submitButton" style="background-color: #32a840">HSFs</button></a>
-                <a href="AFlogin.html"><button class="submitButton">AFs</button></a>
+                <span id="main-text">Login to <span id="highlighted">connect</span> with your <span id="highlighted">HSF</span></span>
+                <form action="./videoCall.html" onsubmit="return validate()">
+                    <input type="text" id="email" placeholder="Email" name="email"/>
+                    <br/>
+                    <input type="password" id="password" placeholder="Password" name="password"/>
+                    <button class="submitButton" type="submit" onclick="validate()">Login</button>
+                </form>
             </div>
         </div>
         <div class="right-pane">
@@ -26,11 +30,11 @@
     </div>
     <script>
 
-        function hsfvalidate(){
+        function validate(){
             let email = document.getElementById("email")
             let password = document.getElementById("password")
 
-            if(email.value.match(/\S+@\S+/)){
+            if(email.value.match(/[A-Za-z]+@princeton\.edu/)){
                 
                 email.className = ""
 
